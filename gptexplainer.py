@@ -1,29 +1,35 @@
-from typing import Dict
+from typing import Dict, Callable
 
 
 
 class GPTExplainer:
     """
-    Class GPTExplainer for creating GPT explainer instance.
+    Class for creating GPTExplainer instance to interpret model predictions.
     """
 
 
-    def __init__(self, task_desc: str, preds_descrs: Dict,
-                 gpt_fn, answer_language: str = "English") -> None:
+    def __init__(self, task_desc: str, preds_descrs: Dict[str, str],
+                 gpt_fn: Callable[[str], str], answer_language: str = "English") -> None:
         """
         Initialize the GPTExplainer class.
         
         Args:
             task_desc (str): description of the task the prediction model is working on.
-            preds_descrs (Dict): a dictionary with predictors and their descriptions.
-            gpt_fn (function): a function that calls the GPT model.
-            answer_language (str, optional): the language in which we want to receive the explanation.
+            preds_descrs (Dict[str, str]): a dictionary with predictors and their descriptions.
+            gpt_fn (Callable[[str], str]): a function that interacts with a GPT model.
+            answer_language (str, optional): language for the explanation (default: English).
         """
 
         self.task_desc = task_desc
         self.preds_descrs = preds_descrs
-        self.gpt_fn = gpt_fn
         self.answer_language = answer_language
+
+        if not callable(gpt_fn):
+            raise TypeError(
+                f"gpt_fn must be a callable function."
+            )
+        
+        self.gpt_fn = gpt_fn
 
         self.prompt_template = """You are a Data Scientist who understands how to interpret model results.
 
@@ -46,12 +52,12 @@ Draw a conclusion in one or two sentences.
 7. **Important to include the ORIGINAL features names in parentheses when mentioning them.**"""
 
 
-    def explain(self, preds_values: Dict) -> str:
+    def explain(self, preds_values: Dict[str, float]) -> str:
         """
         Performs an explaining specific prediction using influence values.
         
         Args:
-            preds_values (Dict): a dictionary with predictors and their influences values,
+            preds_values (Dict[str, float]): a dictionary with predictors and their influences values,
                 where the key is the predictor name and the value is the predictor influence value.
         
         Returns:

@@ -2,7 +2,7 @@
 
 The `gptexplainer` module provides a `GPTExplainer` class to generate human-readable explanations for model predictions using a GPT model. This module is particularly useful for interpreting predictions by detailing the most influential features and presenting insights in a specified language.
 
-## `GPTExplainer`
+## GPTExplainer
 
 The `GPTExplainer` class creates an instance for interpreting prediction results in a structured, natural-language format.
 
